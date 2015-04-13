@@ -48,9 +48,9 @@ userCtrl.update = function(id, values){
 //DESTROY
 userCtrl.deleteById = function(id){
     var deferred = q.defer();
-    Users.findOneAndRemove({_id: id}, function(error, student){
+    Users.findOneAndRemove({_id: id}, function(error, user){
         if(error) deferred.reject(error);
-        else deferred.resolve(student);
+        else deferred.resolve(user);
     });
     return deferred.promise;
 };

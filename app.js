@@ -20,6 +20,7 @@ app.use(bodyParser.json());
 app.use(expressValidator());
 
 var userRoutes = require('./routes/userRoutes.js');
+var challengesRoutes = require('./routes/challengesRoutes.js');
 
 app.get('/', function(req, res) {
     return res.json({
@@ -27,7 +28,24 @@ app.get('/', function(req, res) {
     });
 });
 
+//Define some custom validations (may move into module at a later time)
+app.use(expressValidator({
+    customValidators: {
+        areMongoIds: function(arrayOfMongoIds) {
+            var reGex = new RegExp("^[0-9a-fA-F]{24}$");
+            for(var id in arrayOfMongoIds){
+                if(!reGex.test(id)) return false;
+            }
+            return true;
+        },
+        isArray: function(value) {
+            return Array.isArray(value);
+        }
+    }
+}));
+
 app.use('/users', userRoutes);
+app.use('/challenges', challengesRoutes);
 
 var port = process.env.PORT || 5000;
 app.listen(port);

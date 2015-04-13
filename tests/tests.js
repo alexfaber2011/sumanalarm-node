@@ -104,10 +104,10 @@ describe('USERS', function(){
     });
 });
 
-/*describe('CHALLENGES', function(){
+describe('CHALLENGES', function(){
     var challengeId = {};
     //CREATE
-    /!*it('should create challenge [INTERNAL MECHANISM]', function(done){
+    /*it('should create challenge [INTERNAL MECHANISM]', function(done){
         request(app)
             .post('/challenges')
             .send({
@@ -132,7 +132,7 @@ describe('USERS', function(){
                 challengeId = result.body._id;
                 done();
             });
-    });*!/
+    });*/
 
     //CREATE
     it('should create challenge [USER MECHANISM]', function(done){
@@ -144,76 +144,80 @@ describe('USERS', function(){
             })
             .expect(200)
             .end(function(error, result){
-                if(error) done(error);
+                expect(result.body.userName).to.equal('geoff_gilles2');
                 challengeId = result.body._id;
                 done();
             });
     });
 
-    //READ
-    it('should read a challenge', function(done){
-        request(app)
-            .get('/challenges/' + challengeId)
-            .expect(200, done)
-    });
-
-    //UPDATE
-    it('should add update the time', function(done){
-        request(app)
-            .put('/challenges/' + challengeId)
-            .send({
-                date: moment().add(1, 'days').format()
-            })
-            .expect(200, {owner: 'geoff_gilles2'}, done)
-    });
-
-    //UPDATE
-    it('should be able to get accepted by Alex', function(done){
-       request(app)
-           .put('/challenges/' + challengeId + '/accept/' + westleyId)
-           .send({
-               accept: true
-           })
-           .expect(200, done)
-    });
-
-    //UPDATE
-    it('should NOT let Westley accept', function(done){
-        requets(app)
-            .put('/challenges/' + challengeId + '/accept/' + westleyId)
-            .send({
-                accept: true
-            })
-            .expect(404, done)
-    });
-
-    //UPDATE
-    it('should add another user to the participants array', function(done){
-        request(app)
-            .put('/challenges/' + challengeId + '/participants')
-            .send({
-                userName: westleyId
-            })
-            .expect(200, {owner: 'geoff_gilles2'}, done); //TODO more sophistication
-    });
-
-    //UPDATE
-    it('should update Westely\'s score', function(done){
-       request(app)
-           .put('/challenges/' + challengeId + '/score/' + westleyId)
-           .send({
-               score: 10
-           })
-           .expect(200, {owner: 'geoff_gilles2'}, done); //TODO more sophistication
-    });
+    ////READ
+    //it('should read a challenge', function(done){
+    //    request(app)
+    //        .get('/challenges/' + challengeId)
+    //        .expect(200, done)
+    //});
+    //
+    ////UPDATE
+    //it('should add update the time', function(done){
+    //    request(app)
+    //        .put('/challenges/' + challengeId)
+    //        .send({
+    //            date: moment().add(1, 'days').format()
+    //        })
+    //        .expect(200, {owner: 'geoff_gilles2'}, done)
+    //});
+    //
+    ////UPDATE
+    //it('should be able to get accepted by Alex', function(done){
+    //   request(app)
+    //       .put('/challenges/' + challengeId + '/accept/' + alexId)
+    //       .send({
+    //           accept: true
+    //       })
+    //       .expect(200, done)
+    //});
+    //
+    ////UPDATE
+    //it('should NOT let Westley accept', function(done){
+    //    requets(app)
+    //        .put('/challenges/' + challengeId + '/accept/' + westleyId)
+    //        .send({
+    //            accept: true
+    //        })
+    //        .expect(404, done)
+    //});
+    //
+    ////UPDATE
+    //it('should add another user to the participants array', function(done){
+    //    request(app)
+    //        .put('/challenges/' + challengeId + '/participants')
+    //        .send({
+    //            userName: westleyId
+    //        })
+    //        .expect(200, {owner: 'geoff_gilles2'}, done); //TODO more sophistication
+    //});
+    //
+    ////UPDATE
+    //it('should update Westely\'s score', function(done){
+    //   request(app)
+    //       .put('/challenges/' + challengeId + '/score/' + westleyId)
+    //       .send({
+    //           score: 10
+    //       })
+    //       .expect(200, {owner: 'geoff_gilles2'}, done); //TODO more sophistication
+    //});
 
     //DELETE
     it('should delete the challenge', function(done){
         request(app)
             .delete('/challenges/' + challengeId)
-            .expect(200, {owner: 'geoff_gilles2'}, done);
+            .expect(200)
+            .end(function(error, result){
+                expect(result.body.userName).to.equal('geoff_gilles2');
+                done();
+            });
     });
-});*/
+});
 
 describe('USERS again (For deletion purposes)', function(){
     //DELETE
