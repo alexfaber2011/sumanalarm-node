@@ -45,6 +45,32 @@ challengesCtrl.update = function(id, values){
     return deferred.promise;
 };
 
+//UPDATE
+challengesCtrl.accept = function(challengeId, userId, accept){
+    var deferred = q.defer();
+    Challenges.findOneAndUpdate(
+        {_id: challengeId, "participants._id": userId},
+        {$set: {"participants.$.accepted": accept}},
+        null,
+        function(error, updatedChallenge){
+            if(error || !updatedChallenge) deferred.reject(error || 'No Challenge Found with ChallengedId and userId of: ' + challengeId + ', ' + userId);
+            else{
+                deferred.resolve(updatedChallenge);
+           }
+        });
+    return deferred.promise;
+};
+
+//UPDATE
+challengesCtrl.addParticipants = function(challengeId, participants){
+    var deferred = q.defer();
+    Challenges.findOneAndUpdate({_id: challengeId}, {$push: {participants: {$each: participants}}}, null, function(error, updatedChallenge){
+        if(error || !updatedChallenge) deferred.reject(error || 'No Challenge Found with ChallengedId of: ' + challengeId);
+        else deferred.resolve(updatedChallenge);
+    });
+    return deferred.promise;
+};
+
 //DESTROY
 challengesCtrl.deleteById = function(id){
     var deferred = q.defer();

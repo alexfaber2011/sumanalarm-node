@@ -109,6 +109,7 @@ router.post('/', function(req, res, next){
     });
 });
 
+//UPDATE
 router.put('/:id', function(req, res, next){
     //Check if request is gucci
     req.checkParams('id', 'Invalid PUT param: must be a valid MongoID').isMongoId();
@@ -135,6 +136,67 @@ router.put('/:id', function(req, res, next){
     });
 });
 
+//UPDATE - ACCEPT
+router.put('/:challengeId/accept/:userId', function(req, res, next){
+    req.checkParams('challengeId', 'Invalid PUT param: must be a valid Mongo Id').isMongoId();
+    req.checkParams('userId', 'Invalid PUT param: must be a valid Mongo Id').isMongoId();
+    req.checkBody('accept', 'Invalid Put Param: must have an acceptance flag');
+
+    var errors = req.validationErrors(true);
+    if(errors){
+        res.status(400).send({error: errors});
+        return
+    }
+
+    challengesCtrl.accept(req.params.challengeId, req.params.userId, req.body.accept).then(function(updatedChallenge){
+        res.json(updatedChallenge);
+    }).catch(function(error){
+        res.status(404).send({error: error});
+    });
+});
+
+//UPDATE - PARTICIPANTS
+router.put('/:challengeId/participants', function(req, res, next){
+    req.checkParams('challengeId', 'Invalid PUT param: must be a valid Mongo Id').isMongoId();
+    req.checkBody('userNames', 'Invalid PUT param: must be an array of Mongo Ids').isArray();
+
+    var errors = req.validationErrors(true);
+    if(errors){
+        res.status(400).send({error: errors});
+        return
+    }
+
+    var participantsToAdd = _.uniq(req.body.userNames);
+
+    //Check to see if the participants are already in the challange, and omit them if they are.
+    challengesCtrl.find({_id: req.params.challengeId}).then(function(challenge){
+        var existentParticipants = _.map(challenge.participants, function(existentParticipant){
+            return existentParticipant.userName;
+        });
+
+        participantsToAdd = _.difference(participantsToAdd, existentParticipants);
+
+        buildParticipants(participantsToAdd).then(function(result){
+            challengesCtrl.addParticipants(req.params.challengeId, result.participants).then(function(updatedChallenge){
+                res.json(updatedChallenge);
+            }).catch(function(error){
+                res.status(500).send({error: error});
+            })
+        })
+    }).catch(function(error){
+        res.status(404).send({error: error})
+    })
+
+
+});
+
+//UPDATE - SCORE
+router.put('/:challengeId/score/:userId', function(req, res, next){
+    req.checkParams('challengeId', 'Invalid PUT param: must be a valid Mongo Id').isMongoId();
+    req.checkParams('userId', 'Invalid PUT param: must be a valid Mongo Id').isMongoId();
+});
+
+//DELETE
 router.delete('/:id', function(req, res, next){
     //Check if request is gucci
     req.checkParams('id', 'Invalid GET Param').isMongoId();

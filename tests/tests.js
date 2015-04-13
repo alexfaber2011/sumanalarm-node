@@ -183,12 +183,12 @@ describe('CHALLENGES', function(){
 
     //UPDATE
     it('should NOT let Westley accept', function(done){
-        requets(app)
+        request(app)
             .put('/challenges/' + challengeId + '/accept/' + westleyId)
             .send({
                 accept: true
             })
-            .expect(404, done)
+            .expect(404, done);
     });
 
     //UPDATE
@@ -196,11 +196,17 @@ describe('CHALLENGES', function(){
         request(app)
             .put('/challenges/' + challengeId + '/participants')
             .send({
-                userName: westleyId
+                userNames: ['westley_bonack']
             })
             .expect(200)
             .end(function(error, result){
-                expect(result.body.participants).to.contain({_id: westleyId});
+                expect(result.body.participants).to.contain(
+                    {
+                        _id: westleyId,
+                        score: 0,
+                        userName: 'westley_bonack',
+                        accepted: false
+                    });
                 done()
             })
     });
