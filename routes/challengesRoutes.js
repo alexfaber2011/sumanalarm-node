@@ -42,6 +42,7 @@ buildParticipants = function(userNames){
     return deferred.promise;
 };
 
+//READ
 router.get('/:id?', function(req, res, next){
     //Check if request is gucci
     req.checkParams('id', 'Invalid GET Param: must be a valid Mongo Id').optional().isMongoId();
@@ -58,7 +59,7 @@ router.get('/:id?', function(req, res, next){
     if(req.params.id){
         query = {_id: req.params.id};
     }else{
-        query = queryGenerator.build(['firstName','lastName','userName'], 'query', req);
+        query = queryGenerator.build(['owner','date','userName'], 'query', req);
     }
 
     challengesCtrl.find(query).then(function(user){
@@ -111,11 +112,9 @@ router.post('/', function(req, res, next){
 router.put('/:id', function(req, res, next){
     //Check if request is gucci
     req.checkParams('id', 'Invalid PUT param: must be a valid MongoID').isMongoId();
-    req.checkBody('firstName', 'Invalid PUT Param').optional().isAlpha();
-    req.checkBody('lastName', 'Invalid PUT Param').optional().isAlpha();
+    req.checkBody('owner', 'Invalid PUT Param').optional();
+    req.checkBody('date', 'Invalid PUT Param').optional();
     req.checkBody('userName', 'Invalid PUT Param').optional();
-    req.checkBody('password', 'Invalid PUT Param').optional().isAscii();
-    req.checkBody('snoozes', 'Invalid PUT Param').optional().isNumeric();
 
     var errors = req.validationErrors(true);
     if(errors){
@@ -123,14 +122,14 @@ router.put('/:id', function(req, res, next){
         return
     }
 
-    var query = queryGenerator.build(['firstName', 'lastName', 'userName', 'password', 'snoozes'], 'body', req);
+    var query = queryGenerator.build(['owner', 'date', 'userName'], 'body', req);
     if(!query){
-        res.status(400).send({error: 'Must supply at least one PUT paramter'});
+        res.status(400).send({error: 'Must supply at least one PUT parameter'});
         return
     }
 
-    challengesCtrl.update(req.params.id, query).then(function(updatedUser){
-        res.json(updatedUser);
+    challengesCtrl.update(req.params.id, query).then(function(updateChallenge){
+        res.json(updateChallenge);
     }).catch(function(error){
         res.status(404).send({error: error});
     });
