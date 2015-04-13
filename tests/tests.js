@@ -158,7 +158,7 @@ describe('CHALLENGES', function(){
     });
 
     //UPDATE
-    it('should  update the time', function(done){
+    it('should update the time', function(done){
         request(app)
             .put('/challenges/' + challengeId)
             .send({
@@ -220,7 +220,12 @@ describe('CHALLENGES', function(){
            })
            .expect(200)
            .end(function(error, result){
-               expect(result.body.participants).to.contain({_id: westleyId, score: 10});
+               expect(result.body.participants).to.contain({
+                   _id: westleyId,
+                   score: 10,
+                   userName: 'westley_bonack',
+                   accepted: false
+               });
                done()
            })
     });

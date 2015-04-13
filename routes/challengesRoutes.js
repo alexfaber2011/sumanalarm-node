@@ -194,6 +194,20 @@ router.put('/:challengeId/participants', function(req, res, next){
 router.put('/:challengeId/score/:userId', function(req, res, next){
     req.checkParams('challengeId', 'Invalid PUT param: must be a valid Mongo Id').isMongoId();
     req.checkParams('userId', 'Invalid PUT param: must be a valid Mongo Id').isMongoId();
+    req.checkBody('score', 'Invalid Put Param: must be a number').isNumeric();
+
+    var errors = req.validationErrors(true);
+    if (errors) {
+        res.status(400).send({error: errors});
+        return
+    }
+
+    challengesCtrl.updateParticipantScore(req.params.challengeId, req.params.userId, req.body.score).then(function(updatedChallenge){
+        res.json(updatedChallenge);
+    }).catch(function(error){
+        res.status(404).send({error: error});
+    })
+
 });
 
 //DELETE

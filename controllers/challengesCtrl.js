@@ -71,6 +71,20 @@ challengesCtrl.addParticipants = function(challengeId, participants){
     return deferred.promise;
 };
 
+//UPDATE
+challengesCtrl.updateParticipantScore = function(challengeId, userId, score){
+    var deferred = q.defer();
+    Challenges.findOneAndUpdate(
+        {_id: challengeId, "participants._id": userId},
+        {$set: {"participants.$.score": score}},
+        null,
+        function(error, updatedChallenge){
+            if(error || !updatedChallenge) deferred.reject(error || 'No Challenge Found with ChallengedId and userId of: ' + challengeId + ', ' + userId);
+            else deferred.resolve(updatedChallenge);
+        });
+    return deferred.promise;
+};
+
 //DESTROY
 challengesCtrl.deleteById = function(id){
     var deferred = q.defer();
