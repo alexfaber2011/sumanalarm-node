@@ -5,6 +5,6 @@ ssh alex@104.236.94.200 <<EOF
   PORT=5555
   forever stop sumanalarm-production
   forever start --minUptime=5000 --spinSleepTime=2000 -o app.log -a --uid "sumanalarm-production" app.js
-  mocha ./tests/test.js
+  mocha tests/test.js
   exit
 EOF
