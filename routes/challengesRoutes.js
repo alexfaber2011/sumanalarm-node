@@ -70,7 +70,7 @@ router.get('/:id?', function(req, res, next){
 });
 
 router.post('/', function(req, res, next){
-    req.checkBody('participants', 'Invalid POST Param: must be an array of userNames').isArray();
+    req.checkBody('userNames', 'Invalid POST Param: must be an array of userNames').isArray();
     req.checkBody('owner', 'Invalid POST Param: must be a valid Mongo Id').isMongoId();
 
     var errors = req.validationErrors(true);
@@ -80,7 +80,7 @@ router.post('/', function(req, res, next){
     }
 
     //Build participants data structure
-    var participants = _.uniq(req.body.participants);  //remove any duplicate user ids
+    var participants = _.uniq(req.body.userNames);  //remove any duplicate user ids
 
     buildParticipants(participants).then(function(result){
         //If no participants are found, send the array back of un found participants

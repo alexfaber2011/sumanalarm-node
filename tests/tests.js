@@ -140,7 +140,7 @@ describe('CHALLENGES', function(){
             .post('/challenges')
             .send({
                 owner: geoffId,
-                participants: ['alex_faber']
+                userNames: ['alex_faber']
             })
             .expect(200)
             .end(function(error, result){
@@ -191,7 +191,7 @@ describe('CHALLENGES', function(){
             .expect(404, done);
     });
 
-    //UPDATE 
+    //UPDATE
     it('should add another user to the participants array', function(done){
         request(app)
             .put('/challenges/' + challengeId + '/participants')
