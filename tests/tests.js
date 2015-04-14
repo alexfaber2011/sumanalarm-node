@@ -211,7 +211,7 @@ describe('CHALLENGES', function(){
             })
     });
 
-    //UPDATE
+    //UPDATE 
     it('should update Westely\'s score', function(done){
        request(app)
            .put('/challenges/' + challengeId + '/score/' + westleyId)
