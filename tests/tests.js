@@ -191,7 +191,7 @@ describe('CHALLENGES', function(){
             .expect(404, done);
     });
 
-    //UPDATE 
+    //UPDATE
     it('should add another user to the participants array', function(done){
         request(app)
             .put('/challenges/' + challengeId + '/participants')

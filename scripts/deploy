@@ -3,6 +3,8 @@ ssh alex@104.236.94.200 <<EOF
   git pull origin master
   npm install --production
   PORT=5555
+  echo $SUMAN_ALARM_DB_USER
+  echo $SUMAN_ALARM_DB_PASSWORD
   forever stop sumanalarm-production
   forever start --minUptime=5000 --spinSleepTime=2000 -o app.log -a --uid "sumanalarm-production" app.js
   mocha ./tests/tests.js
