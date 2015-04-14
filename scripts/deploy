@@ -1,0 +1,10 @@
+ssh alex@104.236.94.200 <<EOF
+  cd ~/sumanalarm-node
+  git pull origin master
+  npm install --production
+  PORT=5555
+  forever stop sumanalarm-production
+  forever start --minUptime=5000 --spinSleepTime=2000 -o app.log -a --uid "sumanalarm-production" app.js
+  ./scripts/test
+  exit
+EOF
