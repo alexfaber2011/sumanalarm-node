@@ -6,6 +6,7 @@ var mongoose = require('mongoose');
 var bodyParser = require('body-parser');
 
 var mongoLab = require('./modules/mongoInitialize');
+var pt = require('./modules/logger.js');
 var expressValidator = require('express-validator');
 
 //pass in false if not running tests
@@ -21,6 +22,9 @@ app.use(expressValidator());
 
 var userRoutes = require('./routes/userRoutes.js');
 var challengesRoutes = require('./routes/challengesRoutes.js');
+
+//Enable pt
+pt.log(app);
 
 app.get('/', function(req, res) {
     return res.json({
