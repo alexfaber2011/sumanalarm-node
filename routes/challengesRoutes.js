@@ -70,11 +70,12 @@ router.get('/:id?', function(req, res, next){
 });
 
 router.post('/', function(req, res, next){
-    req.checkBody('userNames', 'Invalid POST Param: must be an array of userNames').isArray();
-    req.checkBody('owner', 'Invalid POST Param: must be a valid Mongo Id').isMongoId();
+    req.checkBody('userNames', 'Invalid POST Param: must be an array of userNames').notEmpty();
+    req.checkBody('owner', 'Invalid POST Param: must be a valid Mongo Id').notEmpty().isMongoId();
 
     var errors = req.validationErrors(true);
     if (errors) {
+        console.log(errors);
         res.status(400).send({error: errors});
         return
     }
