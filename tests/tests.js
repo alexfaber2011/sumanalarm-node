@@ -15,7 +15,7 @@ describe('USERS', function(){
            .send({
                firstName: 'Geoff',
                lastName: 'Gilles',
-               userName: 'geoff_gilles',
+               userName: 'geoff_gilles_test',
                password: 'password'
            })
            .expect(200)
@@ -35,7 +35,7 @@ describe('USERS', function(){
             .send({
                 firstName: 'Alex',
                 lastName: 'Faber',
-                userName: 'alex_faber',
+                userName: 'alex_faber_test',
                 password: 'password'
             })
             .expect(200)
@@ -55,7 +55,7 @@ describe('USERS', function(){
             .send({
                 firstName: 'Westley',
                 lastName: 'Bonack',
-                userName: 'westley_bonack',
+                userName: 'westley_bonack_test',
                 password: 'password'
             })
             .expect(200)
@@ -90,15 +90,15 @@ describe('USERS', function(){
     });
 
     //UPDATE
-    it('should update Geoff\'s username to geoff_gilles2', function(done){
+    it('should update Geoff\'s username to geoff_gilles_test2', function(done){
        request(app)
            .put('/users/' + geoffId)
            .send({
-               userName: 'geoff_gilles2'
+               userName: 'geoff_gilles_test2'
            })
            .expect(200)
            .end(function(error, result){
-               expect(result.body.userName).to.equal('geoff_gilles2');
+               expect(result.body.userName).to.equal('geoff_gilles_test2');
                done();
            });
     });
@@ -135,16 +135,21 @@ describe('CHALLENGES', function(){
     });*/
 
     //CREATE
+    /*
+    * NOTE: the userNames is array is intentionally set this way, as it mimics the way Android is sending an array of
+    * userNames across the wire
+    *
+    * */
     it('should create challenge [USER MECHANISM]', function(done){
         request(app)
             .post('/challenges')
             .send({
                 owner: geoffId,
-                userNames: ['alex_faber']
+                userNames: '[alex_faber_test]'
             })
             .expect(200)
             .end(function(error, result){
-                expect(result.body.userName).to.equal('geoff_gilles2');
+                expect(result.body.userName).to.equal('geoff_gilles_test2');
                 challengeId = result.body._id;
                 done();
             });
@@ -166,7 +171,7 @@ describe('CHALLENGES', function(){
             })
             .expect(200)
             .end(function(error, result){
-                expect(result.body.userName).to.equal('geoff_gilles2');
+                expect(result.body.userName).to.equal('geoff_gilles_test2');
                 done()
             })
     });
@@ -196,7 +201,7 @@ describe('CHALLENGES', function(){
         request(app)
             .put('/challenges/' + challengeId + '/participants')
             .send({
-                userNames: ['westley_bonack']
+                userNames: ['westley_bonack_test']
             })
             .expect(200)
             .end(function(error, result){
@@ -204,7 +209,7 @@ describe('CHALLENGES', function(){
                     {
                         _id: westleyId,
                         score: 0,
-                        userName: 'westley_bonack',
+                        userName: 'westley_bonack_test',
                         accepted: false
                     });
                 done()
@@ -223,7 +228,7 @@ describe('CHALLENGES', function(){
                expect(result.body.participants).to.contain({
                    _id: westleyId,
                    score: 10,
-                   userName: 'westley_bonack',
+                   userName: 'westley_bonack_test',
                    accepted: false
                });
                done()
@@ -236,7 +241,7 @@ describe('CHALLENGES', function(){
             .delete('/challenges/' + challengeId)
             .expect(200)
             .end(function(error, result){
-                expect(result.body.userName).to.equal('geoff_gilles2');
+                expect(result.body.userName).to.equal('geoff_gilles_test2');
                 done();
             });
     });
@@ -249,7 +254,7 @@ describe('USERS again (For deletion purposes)', function(){
             .delete('/users/' + geoffId)
             .expect(200)
             .end(function(error, result){
-                expect(result.body.userName).to.equal('geoff_gilles2');
+                expect(result.body.userName).to.equal('geoff_gilles_test2');
                 done()
             });
     });
@@ -259,7 +264,7 @@ describe('USERS again (For deletion purposes)', function(){
             .delete('/users/' + alexId)
             .expect(200)
             .end(function(error, result){
-                expect(result.body.userName).to.equal('alex_faber');
+                expect(result.body.userName).to.equal('alex_faber_test');
                 done()
             });
     });
@@ -269,7 +274,7 @@ describe('USERS again (For deletion purposes)', function(){
             .delete('/users/' + westleyId)
             .expect(200)
             .end(function(error, result) {
-                expect(result.body.userName).to.equal('westley_bonack');
+                expect(result.body.userName).to.equal('westley_bonack_test');
                 done()
             });
     });
