@@ -14,6 +14,20 @@ var queryGenerator = require('../modules/queryGenerator.js');
 var challengesCtrl = require('../controllers/challengesCtrl.js');
 var userCtrl = require('../controllers/userCtrl.js');
 
+buildArray = function(arrayString){
+    var builtArray = []
+    //remove brackets and spaces
+    arrayString = arrayString.replace('[', '');
+    arrayString = arrayString.replace(']', '');
+    arrayString = arrayString.replace(/\s/g, '');
+    //split elements up
+    var elements = arrayString.split(',');
+    _.each(elements, function(element){
+        builtArray.push(element);
+    });
+    return builtArray
+};
+
 buildParticipants = function(userNames){
     var deferred = q.defer();
     var result = {
@@ -34,7 +48,7 @@ buildParticipants = function(userNames){
             }
         }).catch(function(error){
             result.unFoundUserNames.push(userNames[i]);
-            if((i + 1) == userNames.length){
+            if((i + 1) >= userNames.length){
                 deferred.resolve(result)
             }
         });
@@ -50,9 +64,14 @@ router.get('/:id?', function(req, res, next){
     req.checkQuery('date', 'Invalid GET Param').optional();
     req.checkQuery('userName', 'Invalid GET Param').optional();
 
+    console.log('req.body: ' + JSON.stringify(req.body));
+    console.log('req.query: ' + JSON.stringify(req.query));
+    console.log('req.params: ' + JSON.stringify(req.params));
+
     var errors = req.validationErrors(true);
     if (errors) {
         res.status(400).send({error: errors});
+        next();
         return
     }
     var query;
@@ -62,8 +81,15 @@ router.get('/:id?', function(req, res, next){
         query = queryGenerator.build(['owner','date','userName'], 'query', req);
     }
 
-    challengesCtrl.find(query).then(function(user){
-        res.json(user);
+    if(_.isEmpty(query)){
+        res.status(400).send({error: "Must supply at least one GET param"});
+        next();
+        return
+    }
+
+    challengesCtrl.find(query).then(function(challenges){
+        console.log('.find(): challenges: ', JSON.stringify(challenges));
+        res.status(200).json(challenges);
     }).catch(function(error){
         res.status(404).send({error: error});
     });
@@ -73,6 +99,7 @@ router.post('/', function(req, res, next){
     req.checkBody('userNames', 'Invalid POST Param: must be an array of userNames').notEmpty();
     req.checkBody('owner', 'Invalid POST Param: must be a valid Mongo Id').notEmpty().isMongoId();
 
+    console.log(req.body.userNames);
     var errors = req.validationErrors(true);
     if (errors) {
         console.log(errors);
@@ -80,8 +107,13 @@ router.post('/', function(req, res, next){
         return
     }
 
+    //Build array of participant user names, because Android sucks
+    var participants = buildArray(req.body.userNames);
+
     //Build participants data structure
-    var participants = _.uniq(req.body.userNames);  //remove any duplicate user ids
+    participants = _.uniq(participants);  //remove any duplicate user ids
+
+    console.log(participants);
 
     buildParticipants(participants).then(function(result){
         //If no participants are found, send the array back of un found participants
