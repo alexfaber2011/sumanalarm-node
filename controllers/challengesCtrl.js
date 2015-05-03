@@ -15,7 +15,7 @@ var challengesCtrl = {};
 challengesCtrl.find = function(query){
     var deferred = q.defer();
     Challenges.find(query, function(error, challenges){
-        if(error || challenges.length == 0) deferred.reject(error || "No Challenges Found.  Query: " + query);
+        if(error || challenges.length == 0) deferred.reject(error || "No Challenges Found.  Query: " + JSON.stringify(query));
         else {
             if(query._id && challenges.length == 1) deferred.resolve(challenges[0]);
             else deferred.resolve(challenges);
