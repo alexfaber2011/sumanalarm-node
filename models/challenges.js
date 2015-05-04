@@ -2,6 +2,7 @@
  * Created by alexfaber on 4/11/15.
  */
 var mongoose = require('mongoose');
+var moment = require('moment');
 //var Participants = require('./participants.js');
 
 var participantSchema = new mongoose.Schema({
@@ -13,7 +14,11 @@ var participantSchema = new mongoose.Schema({
 
 var challengeSchema = new mongoose.Schema({
     owner: String,
-    date: Date,
+    date: {
+        type: Date,
+        "default": moment().format()
+    },
+    name: String,
     participants: [participantSchema],
     userName: String
 });

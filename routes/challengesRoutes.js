@@ -84,6 +84,7 @@ router.get('/:id?', function(req, res, next){
     req.checkQuery('owner', 'Invalid GET Param: must be a valid Mongo Id').optional().isMongoId();
     req.checkQuery('date', 'Invalid GET Param').optional();
     req.checkQuery('userName', 'Invalid GET Param').optional();
+    req.checkQuery('name', 'Invalid GET Param').optional();
 
     var errors = req.validationErrors(true);
     if (errors) {
@@ -96,7 +97,7 @@ router.get('/:id?', function(req, res, next){
     if(req.params.id){
         query = {_id: req.params.id};
     }else{
-        query = queryGenerator.build(['owner','date','userName', 'participantId'], 'query', req);
+        query = queryGenerator.build(['owner','date','userName', 'name'], 'query', req);
     }
 
     if(_.isEmpty(query)){
@@ -115,6 +116,7 @@ router.get('/:id?', function(req, res, next){
 router.post('/', function(req, res, next){
     req.checkBody('userNames', 'Invalid POST Param: must be an array of userNames').notEmpty();
     req.checkBody('owner', 'Invalid POST Param: must be a valid Mongo Id').notEmpty().isMongoId();
+    req.checkBody('name', 'Invalid POST Param').notEmpty()
 
     var errors = req.validationErrors(true);
     if (errors) {
@@ -142,6 +144,7 @@ router.post('/', function(req, res, next){
                 owner: owner._id,
                 participants: result.participants,
                 userName: owner.userName,
+                name: req.body.name,
                 date: new Date()
             };
 
@@ -163,6 +166,7 @@ router.put('/:id', function(req, res, next){
     req.checkBody('owner', 'Invalid PUT Param').optional();
     req.checkBody('date', 'Invalid PUT Param').optional();
     req.checkBody('userName', 'Invalid PUT Param').optional();
+    req.checkBody('name', 'Invalid PUT Param').optional();
 
     var errors = req.validationErrors(true);
     if(errors){
@@ -170,7 +174,7 @@ router.put('/:id', function(req, res, next){
         return
     }
 
-    var query = queryGenerator.build(['owner', 'date', 'userName'], 'body', req);
+    var query = queryGenerator.build(['owner', 'date', 'userName', 'name'], 'body', req);
     if(!query){
         res.status(400).send({error: 'Must supply at least one PUT parameter'});
         return

@@ -145,7 +145,8 @@ describe('CHALLENGES', function(){
             .post('/challenges')
             .send({
                 owner: geoffId,
-                userNames: '[alex_faber_test]'
+                userNames: '[alex_faber_test]',
+                name: 'test_challenge'
             })
             .expect(200)
             .end(function(error, result){
@@ -159,19 +160,30 @@ describe('CHALLENGES', function(){
     it('should read a challenge', function(done){
         request(app)
             .get('/challenges/' + challengeId)
-            .expect(200, done)
+            .expect(200)
+            .end(function(error, result){
+                if(error){
+                    console.error(error);
+                    done(error);
+                }else{
+                    expect(result.body.name).to.equal('test_challenge');
+                    done();
+                }
+            })
     });
 
     //UPDATE
-    it('should update the time', function(done){
+    it('should update the time and name', function(done){
         request(app)
             .put('/challenges/' + challengeId)
             .send({
-                date: moment().add(1, 'days').format()
+                date: moment().add(1, 'days').format(),
+                name: 'new_test_challenge_name'
             })
             .expect(200)
             .end(function(error, result){
                 expect(result.body.userName).to.equal('geoff_gilles_test2');
+                expect(result.body.name).to.equal('new_test_challenge_name');
                 done()
             })
     });
