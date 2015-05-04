@@ -235,6 +235,23 @@ describe('CHALLENGES', function(){
            })
     });
 
+    //READ
+    it('should be able to list all challenges Westley participants in', function(done){
+        request(app)
+            .get('/challenges/participant')
+            .query({participantId: westleyId})
+            .expect(200)
+            .end(function(error, result){
+                if(error){
+                    console.error(error);
+                    done(error);
+                }else{
+                    expect(result.body[0]._id).to.equal(challengeId);
+                    done();
+                }
+            });
+    });
+
     //DELETE
     it('should delete the challenge', function(done){
         request(app)

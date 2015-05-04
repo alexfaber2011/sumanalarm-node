@@ -57,6 +57,27 @@ buildParticipants = function(userNames){
 };
 
 //READ
+router.get('/participant', function(req, res, next){
+    //Check if request is gucci
+    req.checkQuery('participantId', 'Invalid GET Param: must be a valid Mongo Id').isMongoId();
+
+    var errors = req.validationErrors(true);
+    if (errors) {
+        console.error('errors: ' + JSON.stringify(errors));
+        res.status(400).send({error: errors});
+        next();
+        return
+    }
+
+    challengesCtrl.findByParticipantId(req.query.participantId).then(function(challenges){
+        res.status(200).json(challenges);
+    }).catch(function(error){
+        res.status(404).send({error: error});
+    });
+});
+
+
+//READ
 router.get('/:id?', function(req, res, next){
     //Check if request is gucci
     req.checkParams('id', 'Invalid GET Param: must be a valid Mongo Id').optional().isMongoId();
@@ -64,21 +85,18 @@ router.get('/:id?', function(req, res, next){
     req.checkQuery('date', 'Invalid GET Param').optional();
     req.checkQuery('userName', 'Invalid GET Param').optional();
 
-    console.log('req.body: ' + JSON.stringify(req.body));
-    console.log('req.query: ' + JSON.stringify(req.query));
-    console.log('req.params: ' + JSON.stringify(req.params));
-
     var errors = req.validationErrors(true);
     if (errors) {
+        console.error('errors: ' + JSON.stringify(errors));
         res.status(400).send({error: errors});
         next();
         return
     }
-    var query;
+    var query = {};
     if(req.params.id){
         query = {_id: req.params.id};
     }else{
-        query = queryGenerator.build(['owner','date','userName'], 'query', req);
+        query = queryGenerator.build(['owner','date','userName', 'participantId'], 'query', req);
     }
 
     if(_.isEmpty(query)){
@@ -88,7 +106,6 @@ router.get('/:id?', function(req, res, next){
     }
 
     challengesCtrl.find(query).then(function(challenges){
-        console.log('.find(): challenges: ', JSON.stringify(challenges));
         res.status(200).json(challenges);
     }).catch(function(error){
         res.status(404).send({error: error});
@@ -99,7 +116,6 @@ router.post('/', function(req, res, next){
     req.checkBody('userNames', 'Invalid POST Param: must be an array of userNames').notEmpty();
     req.checkBody('owner', 'Invalid POST Param: must be a valid Mongo Id').notEmpty().isMongoId();
 
-    console.log(req.body.userNames);
     var errors = req.validationErrors(true);
     if (errors) {
         console.log(errors);
@@ -112,8 +128,6 @@ router.post('/', function(req, res, next){
 
     //Build participants data structure
     participants = _.uniq(participants);  //remove any duplicate user ids
-
-    console.log(participants);
 
     buildParticipants(participants).then(function(result){
         //If no participants are found, send the array back of un found participants

@@ -24,6 +24,17 @@ challengesCtrl.find = function(query){
     return deferred.promise;
 };
 
+challengesCtrl.findByParticipantId = function(participantId){
+    var deferred = q.defer();
+    Challenges.find({"participants._id": participantId}, function(error, challenges){
+        if(error || challenges.length == 0) deferred.reject(error || "No Challenges Found.  Query: " + JSON.stringify(participantId));
+        else {
+            deferred.resolve(challenges);
+        }
+    });
+    return deferred.promise;
+};
+
 //CREATE
 challengesCtrl.add = function(newChallenge){
     var deferred = q.defer();
