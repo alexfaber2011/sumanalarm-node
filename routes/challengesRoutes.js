@@ -116,7 +116,7 @@ router.get('/:id?', function(req, res, next){
 router.post('/', function(req, res, next){
     req.checkBody('userNames', 'Invalid POST Param: must be an array of userNames').notEmpty();
     req.checkBody('owner', 'Invalid POST Param: must be a valid Mongo Id').notEmpty().isMongoId();
-    req.checkBody('name', 'Invalid POST Param').notEmpty()
+    req.checkBody('name', 'Invalid POST Param').notEmpty();
 
     var errors = req.validationErrors(true);
     if (errors) {
@@ -138,11 +138,19 @@ router.post('/', function(req, res, next){
             next();
         }
 
+        var participants = result.participants;
         //Find details about the owner
         userCtrl.find({_id: req.body.owner}).then(function(owner){
+            participants.push({
+                userName: owner.userName,
+                _id: owner._id,
+                accepted: false,
+                score: 0
+            });
+
             var challenge = {
                 owner: owner._id,
-                participants: result.participants,
+                participants: participants,
                 userName: owner.userName,
                 name: req.body.name,
                 date: new Date()
