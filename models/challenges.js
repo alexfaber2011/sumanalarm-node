@@ -20,7 +20,11 @@ var challengeSchema = new mongoose.Schema({
     },
     name: String,
     participants: [participantSchema],
-    userName: String
+    userName: String,
+    ended: {
+        type: Boolean,
+        "default": false
+    }
 });
 
 //challengeSchema.index({u: 1},{unique: true});

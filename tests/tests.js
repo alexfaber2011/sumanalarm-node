@@ -105,34 +105,7 @@ describe('USERS', function(){
 });
 
 describe('CHALLENGES', function(){
-    var challengeId = {};
-    //CREATE
-    /*it('should create challenge [INTERNAL MECHANISM]', function(done){
-        request(app)
-            .post('/challenges')
-            .send({
-                owner: geoffId,
-                date: new Date(),
-                participants: [
-                    {
-                        userId: alexId,
-                        accepted: false,
-                        score: 0
-                    },
-                    {
-                        userId: geoffId,
-                        accepted: true,
-                        score: 50000
-                    }
-                ]
-            })
-            .expect(200)
-            .end(function(error, result){
-                if(error) done(error);
-                challengeId = result.body._id;
-                done();
-            });
-    });*/
+    var challengeId, challengeId2, challengeId3 = {};
 
     //CREATE
     /*
@@ -155,6 +128,41 @@ describe('CHALLENGES', function(){
                 done();
             });
     });
+
+    //CREATE
+    it('should create challenge2 [USER MECHANISM]', function(done){
+        request(app)
+            .post('/challenges')
+            .send({
+                owner: geoffId,
+                userNames: '[alex_faber_test]',
+                name: 'test_challenge'
+            })
+            .expect(200)
+            .end(function(error, result){
+                expect(result.body.userName).to.equal('geoff_gilles_test2');
+                challengeId2 = result.body._id;
+                done();
+            });
+    });
+
+    //CREATE
+    it('should create challenge3 [USER MECHANISM]', function(done){
+        request(app)
+            .post('/challenges')
+            .send({
+                owner: geoffId,
+                userNames: '[alex_faber_test]',
+                name: 'test_challenge'
+            })
+            .expect(200)
+            .end(function(error, result){
+                expect(result.body.userName).to.equal('geoff_gilles_test2');
+                challengeId3 = result.body._id;
+                done();
+            });
+    });
+
 
     //READ
     it('should read a challenge', function(done){
@@ -195,7 +203,44 @@ describe('CHALLENGES', function(){
            .send({
                accept: true
            })
-           .expect(200, done)
+           .expect(200)
+           .end(function(error, result){
+               if(error) console.error(error);
+               else {
+                   done();
+               }
+           })
+    });
+
+    //UPDATE
+    it('challenge2 should be able to get accepted by Alex', function(done){
+        request(app)
+            .put('/challenges/' + challengeId2 + '/accept/' + alexId)
+            .send({
+                accept: true
+            })
+            .expect(200)
+            .end(function(error, result){
+                if(error) console.error(error);
+                else done();
+            })
+    });
+
+    //UPDATE SCORE
+    it('should update Alex\'s score for all challenges', function(done){
+        request(app)
+            .put('/users/' + alexId + '/score')
+            .send({score: 50})
+            .expect(200)
+            .end(function(error, result){
+                if(error){
+                    console.error(error);
+                    done(error);
+                }else{
+                    expect(result.body.message).to.equal('Updated 2 Challenges\' scores');
+                    done();
+                }
+            })
     });
 
     //UPDATE
@@ -229,7 +274,7 @@ describe('CHALLENGES', function(){
     });
 
     //UPDATE
-    it('should update Westely\'s score', function(done){
+    it('should update Westley\'s score', function(done){
        request(app)
            .put('/challenges/' + challengeId + '/score/' + westleyId)
            .send({
@@ -268,6 +313,28 @@ describe('CHALLENGES', function(){
     it('should delete the challenge', function(done){
         request(app)
             .delete('/challenges/' + challengeId)
+            .expect(200)
+            .end(function(error, result){
+                expect(result.body.userName).to.equal('geoff_gilles_test2');
+                done();
+            });
+    });
+
+    //DELETE
+    it('should delete the challenge2', function(done){
+        request(app)
+            .delete('/challenges/' + challengeId2)
+            .expect(200)
+            .end(function(error, result){
+                expect(result.body.userName).to.equal('geoff_gilles_test2');
+                done();
+            });
+    });
+
+    //DELETE
+    it('should delete the challenge3', function(done){
+        request(app)
+            .delete('/challenges/' + challengeId3)
             .expect(200)
             .end(function(error, result){
                 expect(result.body.userName).to.equal('geoff_gilles_test2');

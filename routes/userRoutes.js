@@ -11,6 +11,7 @@ var queryGenerator = require('../modules/queryGenerator.js');
 
 //Controller
 var userCtrl = require('../controllers/userCtrl.js');
+var challengesCtrl = require('../controllers/challengesCtrl.js');
 
 router.get('/:id?', function(req, res, next){
     //Check if request is gucci
@@ -87,6 +88,28 @@ router.put('/:id', function(req, res, next){
     userCtrl.update(req.params.id, query).then(function(updatedUser){
         res.json(updatedUser);
     }).catch(function(error){
+        res.status(404).send({error: error});
+    });
+});
+
+router.put('/:id/score', function(req, res, next){
+    //Check if request is gucci
+    req.checkParams('id', 'Invalid PUT param: must be a valid MongoID').isMongoId();
+    req.checkBody('score', 'Invalid PUT Param').isNumeric();
+
+    var errors = req.validationErrors(true);
+    if(errors){
+        console.error(errors);
+        res.status(400).send({error: errors});
+        next();
+        return
+    }
+
+    challengesCtrl.updateScores(req.params.id, req.body.score).then(function(updatedChallenges){
+        console.log('challengesCtrl.updateScores: ' + updatedChallenges);
+        res.json({message: 'Updated ' + updatedChallenges + ' Challenges\' scores'});
+    }).catch(function(error){
+        console.log('challengesCtrl.updateScores: error ' + error);
         res.status(404).send({error: error});
     });
 });

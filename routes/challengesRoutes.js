@@ -144,7 +144,7 @@ router.post('/', function(req, res, next){
             participants.push({
                 userName: owner.userName,
                 _id: owner._id,
-                accepted: false,
+                accepted: true,
                 score: 0
             });
 

@@ -96,6 +96,27 @@ challengesCtrl.updateParticipantScore = function(challengeId, userId, score){
     return deferred.promise;
 };
 
+//UPDATE
+challengesCtrl.updateScores = function(userId, score){
+    var deferred = q.defer();
+    Challenges.update(
+        {ended: false, participants:{$elemMatch:{_id: userId, accepted: true, score: 0}}},
+        {$set: {"participants.$.score": score}},
+        {multi: true},
+        function(error, numAffected){
+            //console.log('numAffected: ' + numAffected);
+            if(error || numAffected == 0) {
+                deferred.reject(error || "No matching courses");
+            }
+            else {
+                //console.log('challengesCtrl.updateScore() numAffected: ' + JSON.stringify(numAffected));
+                deferred.resolve(numAffected);
+            }
+        }
+    );
+    return deferred.promise;
+};
+
 //DESTROY
 challengesCtrl.deleteById = function(id){
     var deferred = q.defer();
