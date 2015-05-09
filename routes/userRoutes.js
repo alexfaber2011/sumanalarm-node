@@ -106,7 +106,6 @@ router.put('/:id/score', function(req, res, next){
     }
 
     challengesCtrl.updateScores(req.params.id, req.body.score).then(function(updatedChallenges){
-        console.log('challengesCtrl.updateScores: ' + updatedChallenges);
         res.json({message: 'Updated ' + updatedChallenges + ' Challenges\' scores'});
     }).catch(function(error){
         console.log('challengesCtrl.updateScores: error ' + error);

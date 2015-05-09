@@ -34,8 +34,9 @@ buildParticipants = function(userNames){
         participants: [],
         unFoundUserNames: []
     };
-    for(var i in userNames){
-        userCtrl.find({userName: userNames[i]}).then(function(user){
+    var lastUserName = _.last(userNames);
+    _.each(userNames, function(userName){
+        userCtrl.find({userName: userName}).then(function(user){
             var newParticipant = {
                 userName: user[0].userName,
                 _id: user[0]._id,
@@ -43,16 +44,16 @@ buildParticipants = function(userNames){
                 score: 0
             };
             result.participants.push(newParticipant);
-            if((i + 1) == userNames.length){
+            if(userName == lastUserName){
                 deferred.resolve(result);
             }
         }).catch(function(error){
             result.unFoundUserNames.push(userNames[i]);
-            if((i + 1) >= userNames.length){
+            if(userName == lastUserName){
                 deferred.resolve(result)
             }
         });
-    }
+    });
     return deferred.promise;
 };
 
