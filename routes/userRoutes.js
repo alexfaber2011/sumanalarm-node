@@ -95,7 +95,7 @@ router.put('/:id', function(req, res, next){
 router.put('/:id/score', function(req, res, next){
     //Check if request is gucci
     req.checkParams('id', 'Invalid PUT param: must be a valid MongoID').isMongoId();
-    req.checkBody('score', 'Invalid PUT Param').isNumeric();
+    req.checkBody('score', 'Invalid PUT Param');
 
     var errors = req.validationErrors(true);
     if(errors){
