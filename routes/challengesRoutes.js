@@ -85,6 +85,7 @@ router.get('/:id?', function(req, res, next){
     req.checkQuery('date', 'Invalid GET Param').optional();
     req.checkQuery('userName', 'Invalid GET Param').optional();
     req.checkQuery('name', 'Invalid GET Param').optional();
+    req.checkQuery('ended', 'Invalid GET Param').optional();
 
     var errors = req.validationErrors(true);
     if (errors) {
@@ -97,7 +98,7 @@ router.get('/:id?', function(req, res, next){
     if(req.params.id){
         query = {_id: req.params.id};
     }else{
-        query = queryGenerator.build(['owner','date','userName', 'name'], 'query', req);
+        query = queryGenerator.build(['owner','date','userName', 'name', 'ended'], 'query', req);
     }
 
     if(_.isEmpty(query)){
@@ -175,6 +176,7 @@ router.put('/:id', function(req, res, next){
     req.checkBody('date', 'Invalid PUT Param').optional();
     req.checkBody('userName', 'Invalid PUT Param').optional();
     req.checkBody('name', 'Invalid PUT Param').optional();
+    req.checkBody('ended', 'Invalid PUT Param').optional();
 
     var errors = req.validationErrors(true);
     if(errors){
@@ -182,7 +184,7 @@ router.put('/:id', function(req, res, next){
         return
     }
 
-    var query = queryGenerator.build(['owner', 'date', 'userName', 'name'], 'body', req);
+    var query = queryGenerator.build(['owner', 'date', 'userName', 'name', 'ended'], 'body', req);
     if(!query){
         res.status(400).send({error: 'Must supply at least one PUT parameter'});
         return

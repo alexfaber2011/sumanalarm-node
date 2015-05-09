@@ -292,6 +292,33 @@ describe('CHALLENGES', function(){
            })
     });
 
+    //UPDATE - ENDED
+    it('should end challenge3', function(done){
+        request(app)
+            .put('/challenges/' + challengeId)
+            .send({
+                ended: true
+            })
+            .expect(200)
+            .end(function(error, result){
+                if(error){
+                    console.log(result.body);
+                    done(error);
+                }else{
+                    expect(result.body.ended).to.equal(true);
+                    done();
+                }
+            })
+    });
+
+    it('should not let Westley accept the ended challenge3', function(done){
+        //UPDATE
+        request(app)
+            .put('/challenges/' + challengeId3 + '/accept/' + westleyId)
+            .send({accept: true})
+            .expect(404, done);
+    });
+
     //READ
     it('should be able to list all challenges Westley participants in', function(done){
         request(app)

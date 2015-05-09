@@ -60,12 +60,13 @@ challengesCtrl.update = function(id, values){
 challengesCtrl.accept = function(challengeId, userId, accept){
     var deferred = q.defer();
     Challenges.findOneAndUpdate(
-        {_id: challengeId, "participants._id": userId},
+        {_id: challengeId, "participants._id": userId, ended: false},
         {$set: {"participants.$.accepted": accept}},
         null,
         function(error, updatedChallenge){
-            if(error || !updatedChallenge) deferred.reject(error || 'No Challenge Found with ChallengedId and userId of: ' + challengeId + ', ' + userId);
-            else{
+            if(error || !updatedChallenge) {
+                deferred.reject(error || 'No Challenge Found with ChallengedId and userId of: ' + challengeId + ', ' + userId);
+            }else{
                 deferred.resolve(updatedChallenge);
            }
         });
@@ -104,12 +105,10 @@ challengesCtrl.updateScores = function(userId, score){
         {$set: {"participants.$.score": score}},
         {multi: true},
         function(error, numAffected){
-            //console.log('numAffected: ' + numAffected);
             if(error || numAffected == 0) {
                 deferred.reject(error || "No matching courses");
             }
             else {
-                //console.log('challengesCtrl.updateScore() numAffected: ' + JSON.stringify(numAffected));
                 deferred.resolve(numAffected);
             }
         }
