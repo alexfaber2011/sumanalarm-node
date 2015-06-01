@@ -57,6 +57,26 @@ buildParticipants = function(userNames){
     return deferred.promise;
 };
 
+//Temporary for Singlewire Demonstration
+router.get('/demo', function(req, res, next){
+    req.checkQuery('limit').isNumeric();
+    var errors = req.validationErrors(true);
+    if (errors) {
+        res.status(400).send({error: errors});
+        return
+    }
+
+    var response = [];
+    var limit = (req.query.limit) ? req.query.limit : 10;
+    for(var i = 0; i < limit; i++){
+        response.push({
+            title: 'Generated: ' + Math.ceil(1 / (Math.random())),
+            id: i
+        });
+    }
+    res.json(response);
+});
+
 //READ
 router.get('/participant', function(req, res, next){
     //Check if request is gucci
@@ -288,25 +308,6 @@ router.delete('/:id', function(req, res, next){
     }).catch(function(error){
         res.status(404).send({error: error});
     });
-});
-
-//Temporary for Singlewire Demonstration
-router.get('/demo', function(req, res, next){
-    req.checkQuery('limit').isNumeric();
-    var errors = req.validationErrors(true);
-    if (errors) {
-        res.status(400).send({error: errors});
-        return
-    }
-
-    var response = [];
-    for(var i = 0; i < req.query.limit; i++){
-        response.push({
-            title: 'Generated: ' + Math.ceil(1 / (Math.random())),
-            id: i
-        });
-    }
-    res.json(response);
 });
 
 module.exports = router;
