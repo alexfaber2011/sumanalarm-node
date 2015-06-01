@@ -290,4 +290,23 @@ router.delete('/:id', function(req, res, next){
     });
 });
 
+//Temporary for Singlewire Demonstration
+router.get('/demo', function(req, res, next){
+    req.checkQuery('limit').isNumeric();
+    var errors = req.validationErrors(true);
+    if (errors) {
+        res.status(400).send({error: errors});
+        return
+    }
+
+    var response = [];
+    for(var i = 0; i < req.query.limit; i++){
+        response.push({
+            title: 'Generated: ' + Math.ceil(1 / (Math.random())),
+            id: i
+        });
+    }
+    res.json(response);
+});
+
 module.exports = router;
