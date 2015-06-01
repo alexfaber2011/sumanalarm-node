@@ -70,7 +70,7 @@ router.get('/demo', function(req, res, next){
     var limit = (req.query.limit) ? req.query.limit : 10;
     for(var i = 0; i < limit; i++){
         response.push({
-            title: 'Generated: ' + Math.ceil(1 / (Math.random())),
+            title: 'Generated: ' + Math.ceil(1 / (Math.random() * Math.random() / Math.random())),
             id: i
         });
     }
