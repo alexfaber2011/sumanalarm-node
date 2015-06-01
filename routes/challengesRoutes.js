@@ -59,7 +59,7 @@ buildParticipants = function(userNames){
 
 //Temporary for Singlewire Demonstration
 router.get('/demo', function(req, res, next){
-    req.checkQuery('limit').isNumeric().optional();
+    req.checkQuery('limit').optional().isNumeric();
     var errors = req.validationErrors(true);
     if (errors) {
         res.status(400).send({error: errors});
